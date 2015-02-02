@@ -87,6 +87,7 @@ class sadConv{
 
  var $methods = array(
   // Internal Name => Name, encode function, decode function
+  'toIdList'         => array('To ID list', 'toIdList', false),
   'quoted-printable' => array('Quoted-Printable', null, 'quoted_printable_decode'),
   'base64'           => array('MIME base64', 'base64_encode', 'base64_decode'),
   'rawurl'           => array('Raw URL (RFC 1738)', 'rawurlencode', 'rawurldecode'),
@@ -107,7 +108,6 @@ class sadConv{
   'nl2br'            => array('New Line 2 <br />', 'nl2br', null),
   'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
   'tableCols'        => array('Table Col List', 'tableColEncode', null),
-  'toIdList'         => array('To ID list', 'toIdList', false),
  );
 
  function sadConv($InputString, $Method, $Way){
