@@ -6,8 +6,11 @@ error_reporting(E_ALL ^ E_NOTICE);
 ini_set("display_errors", 1);
 
 function uStamp2Date($uStamp){
- return date('Y-m-d H:i:s', (int) $uStamp);
- // return date('c', $uStamp); // ab PHP5
+ if (version_compare(PHP_VERSION, '5.0.0', '>=')) {
+  return date('Y-m-d H:i:s O', (int) $uStamp);
+ } else {
+  return date('c', $uStamp);
+ }
 }
 
 function schoepferExportTranslator($input){
