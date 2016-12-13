@@ -5,12 +5,17 @@ require_once 'lib/sad.php';
 error_reporting(E_ALL ^ E_NOTICE);
 ini_set("display_errors", 1);
 
+
 function uStamp2Date($uStamp){
  if (version_compare(PHP_VERSION, '5.0.0', '>=')) {
   return date('Y-m-d H:i:s O', (int) $uStamp);
  } else {
   return date('c', $uStamp);
  }
+}
+
+function uStampMillis2Date($uStamp){
+ return uStamp2Date($uStamp/1000);
 }
 
 function schoepferExportTranslator($input){
@@ -102,13 +107,14 @@ class sadConv{
   'scramble_words'   => array('Scramble Words', 'scramble_words', null),
   'serialize'        => array('Serialize', 'serialize', 'getReadableSerializedString'),
   'slashes'          => array('Slashes', 'addslashes', 'stripslashes'),
+  'nl2br'            => array('New Line 2 <br />', 'nl2br', null),
   'htmlentities'     => array('HTML Entites', 'htmlEncode', 'html_entity_decode'),
   'strip_tags'       => array('Strip HTML Tags', false, 'strip_tags'),
   'tags2lower'       => array('Tags2lower', 'tags2lower', 'tags2upper'),
   'strtoupper'       => array('String to upper', 'strtoupper', 'strtolower'),
   'ucwords'          => array('First in word to upper', 'ucwords', null),
   'ustamp'           => array('Unix time stamp', 'strtotime', 'uStamp2Date'),
-  'nl2br'            => array('New Line 2 <br />', 'nl2br', null),
+  'ustampmillis'     => array('Unix time stamp (milliseconds)', null, 'uStampMillis2Date'),
   'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
   'tableCols'        => array('Table Col List', 'tableColEncode', null),
  );
