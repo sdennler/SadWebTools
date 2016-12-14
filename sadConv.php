@@ -4,7 +4,19 @@ require_once 'lib/sad.php';
 
 error_reporting(E_ALL ^ E_NOTICE);
 ini_set("display_errors", 1);
-date_default_timezone_set('UTC');
+
+
+/**
+ * Set timezone for date relevant conversions.
+ */
+$timezone = $timezone_default = 'UTC';
+if(isset($_GET['timezone'])) $timezone = $_GET['timezone'];
+elseif(isset($_COOKIE['timezone'])) $timezone = $_COOKIE['timezone'];
+if(!in_array($timezone, timezone_identifiers_list())) $timezone = $timezone_default;
+date_default_timezone_set($timezone) || date_default_timezone_set($timezone_default);
+if(!isset($_COOKIE['timezone']) || $timezone != $_COOKIE['timezone']){
+ setcookie('timezone', $timezone, 2145916800);
+}
 
 
 function uStamp2Date($uStamp){
