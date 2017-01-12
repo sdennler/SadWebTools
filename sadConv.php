@@ -1,5 +1,4 @@
 <?php
-
 require_once 'lib/sad.php';
 
 error_reporting(E_ALL ^ E_NOTICE);
@@ -17,6 +16,11 @@ date_default_timezone_set($timezone) || date_default_timezone_set($timezone_defa
 if(!isset($_COOKIE['timezone']) || $timezone != $_COOKIE['timezone']){
  setcookie('timezone', $timezone, 2145916800);
 }
+
+
+/************************
+ * Conversion Functions *
+ ************************/
 
 
 function uStamp2Date($uStamp){
@@ -45,6 +49,11 @@ function schoepferExportTranslator($input){
 
 function toIdList($input){
  $input = preg_replace('/[^\d]+/', ',', trim($input));
+ return $input;
+}
+
+function toIdListUnique($input){
+ $input = implode(',', array_unique(explode(',', toIdList($input))));
  return $input;
 }
 
@@ -93,6 +102,12 @@ function tags2upper($input){
  return preg_replace("/(<\/?)(\w+)([^>]*>)/e", "'\\1'.strtoupper('\\2').'\\3'", $input);
 }
 
+
+/**********************
+ * Do the conversions *
+ **********************/
+
+
  /**
   * @version 0.3:2009-09-16
   * @versionTrack 0.2:2008-08-08,0.1:2008-06-16,0.1:2005-05-13,0.1:2005-03-02,scratch
@@ -109,6 +124,7 @@ class sadConv{
  var $methods = array(
   // Internal Name => Name, encode function, decode function
   'toIdList'         => array('To ID list', 'toIdList', false),
+  'toIdListUnique'   => array('To ID list (Unique)', 'toIdListUnique', false),
   'quoted-printable' => array('Quoted-Printable', null, 'quoted_printable_decode'),
   'base64'           => array('MIME base64', 'base64_encode', 'base64_decode'),
   'rawurl'           => array('Raw URL (RFC 1738)', 'rawurlencode', 'rawurldecode'),
