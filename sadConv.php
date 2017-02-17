@@ -35,6 +35,10 @@ function uStampMillis2Date($uStamp){
  return uStamp2Date($uStamp/1000);
 }
 
+function dateTime2Iso8601($timestr){
+ return uStamp2Date(strtotime($timestr));
+}
+
 function schoepferExportTranslator($input){
  #return ereg_replace('&quot;&quot;20&quot;&quot;', "\n", $input);
  $input = substr($input, strpos($input, "\n")+1);
@@ -144,6 +148,7 @@ class sadConv{
   'ucwords'          => array('First in word to upper', 'ucwords', null),
   'ustamp'           => array('Unix time stamp', 'strtotime', 'uStamp2Date'),
   'ustampmillis'     => array('Unix time stamp (milliseconds)', null, 'uStampMillis2Date'),
+  'dateTime2Iso8601' => array('DateTime/zone to ISO 8601', 'dateTime2Iso8601', null),
   'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
   'tableCols'        => array('Table Col List', 'tableColEncode', null),
  );
