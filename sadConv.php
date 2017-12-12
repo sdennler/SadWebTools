@@ -151,6 +151,7 @@ class sadConv{
   'dateTime2Iso8601' => array('DateTime/zone to ISO 8601', 'dateTime2Iso8601', null),
   'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
   'tableCols'        => array('Table Col List', 'tableColEncode', null),
+  'countChar'        => array('Count characters', 'strlen', null),
  );
 
  function sadConv($InputString, $Method, $Way){
@@ -170,13 +171,14 @@ class sadConv{
   }
 
   $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self" accept-charset="ISO-8859-1">'."\n".
-          '<textarea name="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <b>In</b><br />'."\n".
+          '<textarea name="InputString" id="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <b>In</b><br />'."\n".
           '<select name="Method" size="1">'."\n".
           $methodList.
           '</select>'."\n".
           '&nbsp;<input type="Radio" name="Way" value="decode"'.($this->decode?' checked="checked"':'').' /><label for="Way">decode</label>&nbsp;<input type="Radio" name="Way" value="encode"'.(!$this->decode?' checked="checked"':'').' /><label for="Way">encode</label>'."\n".
           '&nbsp;<input type="Checkbox" name="AsFile" value="yes" /><label for="AsFile">Download result</label>'."\n".
           '&nbsp;<input type="Submit" name="convert" value="Convert">'."\n".
+          '&nbsp;&nbsp;&nbsp;<input type="Button" name="clear" value="Clear" onclick="javascript:document.getElementById(\'InputString\').value=\'\';">'."\n".
           "</form>\n";
 
   echo $form;
@@ -247,7 +249,7 @@ if($_POST['AsFile'] != 'yes'){
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
 
-<h1>sadConv 0.3</h1>
+<h1>sadConv 0.4</h1>
 
 <?php
 }
