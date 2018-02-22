@@ -1,9 +1,9 @@
 <?php
 
 /** Cry out a variable
- * @version 0.9:2016-11-02
+ * @version 0.10:2018-02-22
  * @author dennler.jobs.ch
- * @versionTrack 0.8:2013-12-02,0.7:2010-06-15,0.6:2008-09-09,0.5:2007-06-04,0.4:2006-03-17,0.3:2004-12-02,0.2:2004-11-29,0.1:2004-05-06,scratch
+ * @versionTrack 0.9:2016-11-02:0.8:2013-12-02,0.7:2010-06-15,0.6:2008-09-09,0.5:2007-06-04,0.4:2006-03-17,0.3:2004-12-02,0.2:2004-11-29,0.1:2004-05-06,scratch
  * @param mixed   The Value to display
  * @param string  Name to describe the output
  * @param int     Displaymodus: 1 = pre; 2 = one line; 3 = hidde in HTML; 4 = plain; 5 = don't dive, 6 = Write to Logfile SAD_LOGFILE
@@ -14,7 +14,12 @@ function sad($Value=false, $Name=false, $Mode=1, $ReturnMode=1){
 	global $php_errormsg, $cDebug;
 	$output = $pre = $post = '';
 
-	if($cDebug !== true) return false;
+	if($Mode > 10){
+		$Mode -= 10;
+	}
+	elseif($cDebug !== true){
+		return false;
+	}
 
 	if(func_num_args() === 0){
 		$Value = $php_errormsg;
@@ -29,12 +34,16 @@ function sad($Value=false, $Name=false, $Mode=1, $ReturnMode=1){
 
 	switch($Mode){ // Switch for the output
 		case 5:
-			if(is_array($Value) || is_object($Value)){
+			if(is_array($Value) || is_object($Value) || is_resource($Value)){
+				$output .= gettype($Value)." whit:\n";
 				foreach($Value as $key => $content){
+					if(is_string($content)) $content = 'String of '.strlen($content).' length';
 					if(is_object($content)) $content = 'Object of type '.get_class($content);
+					if(is_resource($content)) $content = 'Resource of type '.get_resource_type($content);
 					if(is_array($content)) $content = 'Array whit '.count($content).' elements';
 					$output .= "$key => $content\n";
 				}
+				break;
 			} else $Mode = 1;
 
 		default:
