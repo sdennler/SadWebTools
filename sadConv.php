@@ -10,6 +10,7 @@ ini_set("display_errors", 1);
  */
 $timezone = $timezone_default = 'UTC';
 if(isset($_GET['timezone'])) $timezone = $_GET['timezone'];
+elseif(isset($_POST['Timezone'])) $timezone = $_POST['Timezone'];
 elseif(isset($_COOKIE['timezone'])) $timezone = $_COOKIE['timezone'];
 if(!in_array($timezone, timezone_identifiers_list())) $timezone = $timezone_default;
 date_default_timezone_set($timezone) || date_default_timezone_set($timezone_default);
@@ -123,6 +124,7 @@ class sadConv{
  var $convertetString = false;
  var $method;
  var $decode;
+ protected $timeZone;
  var $errorMSG = false;
 
  var $methods = array(
@@ -154,11 +156,12 @@ class sadConv{
   'countChar'        => array('Count characters', 'strlen', null),
  );
 
- function sadConv($InputString, $Method, $Way){
+ function sadConv($InputString, $Method, $Way, $TimeZone){
   $this->originalString = trim($InputString);
   $this->method = $Method;
   if($Way == 'decode') $this->decode = true;
   else $this->decode = false;
+  $this->timeZone = $TimeZone;
  }
 
  function printImputForm(){
@@ -170,19 +173,32 @@ class sadConv{
    $methodList .= '>'.$method[0]."</option>\n";
   }
 
+  $timeZones = $this->getOptionList(timezone_identifiers_list(), $this->timeZone, false);
+
   $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self" accept-charset="ISO-8859-1">'."\n".
           '<textarea name="InputString" id="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <b>In</b><br />'."\n".
-          '<select name="Method" size="1">'."\n".
-          $methodList.
-          '</select>'."\n".
+          '<select name="Method" size="1">'."\n".$methodList.'</select>'."\n".
           '&nbsp;<input type="Radio" name="Way" value="decode"'.($this->decode?' checked="checked"':'').' /><label for="Way">decode</label>&nbsp;<input type="Radio" name="Way" value="encode"'.(!$this->decode?' checked="checked"':'').' /><label for="Way">encode</label>'."\n".
           '&nbsp;<input type="Checkbox" name="AsFile" value="yes" /><label for="AsFile">Download result</label>'."\n".
           '&nbsp;<input type="Submit" name="convert" value="Convert">'."\n".
           '&nbsp;&nbsp;&nbsp;<input type="Button" name="clear" value="Clear" onclick="javascript:document.getElementById(\'InputString\').value=\'\';">'."\n".
+          '<br/><select name="Timezone" size="1">'."\n".$timeZones.'</select>'."\n".
           "</form>\n";
 
   echo $form;
 
+ }
+
+ protected function getOptionList(Array $values, $selected = false, $writeValue = true){
+  $options = '';
+  foreach($values as $key => $value){
+   $options .= '<option';
+   if($writeValue) $options .= ' value="'.$key.'"';
+   else $key = $value;
+   if($selected == $key) $options .= ' selected="selected"';
+   $options .= '>'.$value."</option>\n";
+  }
+  return $options;
  }
 
  function convert(){
@@ -238,7 +254,8 @@ class sadConv{
   }
   if($this->errorMSG) echo '<b>Error: '.$this->errorMSG.'</b>';
  }
-}
+} // End class sadConv
+
 
 if($_POST['AsFile'] != 'yes'){
 ?><html>
@@ -249,12 +266,12 @@ if($_POST['AsFile'] != 'yes'){
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
 
-<h1>sadConv 0.4</h1>
+<h1>sadConv 0.5</h1>
 
 <?php
 }
 
-$conv = new sadConv($_POST['InputString'], $_POST['Method'], $_POST['Way']);
+$conv = new sadConv($_POST['InputString'], $_POST['Method'], $_POST['Way'], $timezone);
 $conv->convert();
 if($_POST['AsFile'] != 'yes'){
  $conv->printOutput();
