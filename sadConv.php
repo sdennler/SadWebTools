@@ -54,6 +54,7 @@ function schoepferExportTranslator($input){
 
 function toIdList($input){
  $input = preg_replace('/[^\d]+/', ',', trim($input));
+ $input = trim($input, ',');
  return $input;
 }
 
