@@ -7,6 +7,7 @@
  * @param mixed   The Value to display
  * @param string  Name to describe the output
  * @param int     Displaymodus: 1 = pre; 2 = one line; 3 = hidde in HTML; 4 = plain; 5 = don't dive, 6 = Write to Logfile SAD_LOGFILE
+ *                +10 to force output even if not in debug mode.
  * @param int     Return modus: 1 = return $Value; 2 = return output isted ouf print
  * @return mixed  The Value
  */
