@@ -1,5 +1,6 @@
 <?php
 require_once 'lib/sad.php';
+require_once 'lib/sadConv.lib.php';
 
 error_reporting(E_ALL ^ E_NOTICE);
 ini_set("display_errors", 1);
@@ -115,8 +116,8 @@ function tags2upper($input){
 
 
  /**
-  * @version 0.3:2009-09-16
-  * @versionTrack 0.2:2008-08-08,0.1:2008-06-16,0.1:2005-05-13,0.1:2005-03-02,scratch
+  * @version 0.6:2018-08-09
+  * @versionTrack 0.3:2009-09-16,0.2:2008-08-08,0.1:2008-06-16,0.1:2005-05-13,0.1:2005-03-02,scratch
   * @author denner@jobs.ch
   */
 class sadConv{
@@ -152,6 +153,7 @@ class sadConv{
   'ustamp'           => array('Unix time stamp', 'strtotime', 'uStamp2Date'),
   'ustampmillis'     => array('Unix time stamp (milliseconds)', null, 'uStampMillis2Date'),
   'dateTime2Iso8601' => array('DateTime/zone to ISO 8601', 'dateTime2Iso8601', null),
+  'hourdec2hourmin'  => array('Hour decimal 2 Hour sexagesimal', 'hourDec2hurSex', 'hourSex2hourDec'),
   'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
   'tableCols'        => array('Table Col List', 'tableColEncode', null),
   'countChar'        => array('Count characters', 'strlen', null),
@@ -267,7 +269,7 @@ if($_POST['AsFile'] != 'yes'){
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
 
-<h1>sadConv 0.5</h1>
+<h1>sadConv 0.6</h1>
 
 <?php
 }
