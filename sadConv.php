@@ -179,13 +179,13 @@ class sadConv{
   $timeZones = $this->getOptionList(timezone_identifiers_list(), $this->timeZone, false);
 
   $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self" accept-charset="ISO-8859-1">'."\n".
-          '<textarea name="InputString" id="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <b>In</b><br />'."\n".
+          '<textarea name="InputString" id="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <label for="InputString" class="textarea">In</label><br />'."\n".
           '<select name="Method" size="1">'."\n".$methodList.'</select>'."\n".
-          '&nbsp;<input type="Radio" name="Way" value="decode"'.($this->decode?' checked="checked"':'').' /><label for="Way">decode</label>&nbsp;<input type="Radio" name="Way" value="encode"'.(!$this->decode?' checked="checked"':'').' /><label for="Way">encode</label>'."\n".
-          '&nbsp;<input type="Checkbox" name="AsFile" value="yes" /><label for="AsFile">Download result</label>'."\n".
+          '<div class="options">&nbsp;<input type="Radio" name="Way" value="decode"'.($this->decode?' checked="checked"':'').' /><label for="Way">decode</label>&nbsp;<input type="Radio" name="Way" value="encode"'.(!$this->decode?' checked="checked"':'').' /><label for="Way">encode</label>'."\n".
+          '&nbsp;<input type="Checkbox" name="AsFile" value="yes" /><label for="AsFile">Download&nbsp;result</label></div>'."\n".
           '&nbsp;<input type="Submit" name="convert" value="Convert">'."\n".
           '&nbsp;&nbsp;&nbsp;<input type="Button" name="clear" value="Clear" onclick="javascript:document.getElementById(\'InputString\').value=\'\';">'."\n".
-          '<br/><select name="Timezone" size="1">'."\n".$timeZones.'</select>'."\n".
+          '<br/><br/><select name="Timezone" size="1">'."\n".$timeZones.'</select>'."\n".
           "</form>\n";
 
   echo $form;
@@ -230,7 +230,7 @@ class sadConv{
 
  function printOutput(){
   if(!$this->errorMSG && !($this->convertetString === false)){
-   $form = '<textarea name="OutputString" cols="120" rows="24">'.stripslashes($this->convertetString).'</textarea> <b>Out</b>'."\n";
+   $form = '<textarea name="OutputString" cols="120" rows="24">'.stripslashes($this->convertetString).'</textarea> <label for="OutputString" class="textarea">Out</label>'."\n";
    echo $form;
   }
   if($this->errorMSG) echo '<b>Error: '.$this->errorMSG.'</b>';
@@ -261,11 +261,12 @@ class sadConv{
 
 
 if($_POST['AsFile'] != 'yes'){
-?><html>
+?><!DOCTYPE HTML><html>
 <head>
 <title>sadConv</title>
-<meta name="author" content="dennler@jobs.ch">
 <meta name="generator" content="Ulli Meybohms HTML EDITOR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
 
