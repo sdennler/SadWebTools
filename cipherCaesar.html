@@ -68,6 +68,10 @@
 
         return out;
     }
+
+    function copyOut2In(){
+        document.getElementById('InputString').value = document.getElementById('OutputString').value;
+    }
 </script>
 
 <form action="#" accept-charset="UTF-8">
@@ -85,6 +89,7 @@
 
 <div class="controls">
 <button type="reset" value="Reset">Clear</button>
+<input type="Button" name="copy" value="Copy Out to In" onclick="copyOut2In();">
 </div>
 
 </form>
