@@ -1,4 +1,5 @@
-<!DOCTYPE HTML><html>
+<!DOCTYPE HTML>
+<html lang="en">
 <head>
 <title>Caesar Cipher</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -11,11 +12,16 @@
 <h1>Caesar Cipher</h1>
 
 <script>
-    function runCipher(mod = 1){
+    /**
+     * Run Cipher / Decipher
+     * @param {Integer} mode 0 for cipher, 1 for decipher
+     */
+    function runCipher(mode = 1){
         var InputString = document.getElementById('InputString');
         var OutputString = document.getElementById('OutputString');
         var shiftInput = document.getElementById('shift');
-        var shift = parseInt(shiftInput.value) * mod;
+
+        var shift = parseInt(shiftInput.value) * mode;
         if(isNaN(shift)){
             shift = 13;
             shiftInput.value = shift;
@@ -23,9 +29,13 @@
         OutputString.value = CaesarCipher(InputString.value, shift);
     }
 
+    /**
+     * Run brute force break which will output all possible solutions.
+     */
     function breakIt(){
         var InputString = document.getElementById('InputString');
         var OutputString = document.getElementById('OutputString');
+
         OutputString.value = "Let's try all:\n---\n";
         for (var i = 1; i <= 25; i++) {
             OutputString.value += i+': ';
@@ -34,34 +44,48 @@
         }
     }
 
+    /**
+     * Calculate the Caesar Chipher
+     * @param {String} input
+     * @param {Integer} shift Number of steps, use negative numbers to decipher
+     * @returns {String} output
+     */
     function CaesarCipher(input, shift){
 
+        /**
+         * Calculates one character
+         * @param {Integer} char Number representing the character. The first character (example is A) must be represented as 0.
+         * @param {Integer} shift Number of steps.
+         * @param {Integer} charcount Number of characters in the current set.
+         * @returns {Integer}
+         */
         function cipher(char, shift, charcount){
-            char = (char+shift) % charcount;
+            char = (char + shift) % charcount;
             if(char < 0) char += charcount;
             return char;
         }
 
         var out = '';
 
-        for (var i = 0; i < input.length; i++) {
+        for (var i = 0; i < input.length; i++) { // Do for each character in input
             var char = input.charCodeAt(i);
 
-            if(char >= 65 && char <= 90){
+            if(char >= 65 && char <= 90){ // A-Z
                 char -= 65;
                 char = cipher(char, shift, 26);
                 char += 65;
             }
-            else if (char >= 97 && char <= 122){
+            else if (char >= 97 && char <= 122){ // a-z
                 char -= 97;
                 char = cipher(char, shift, 26);
                 char += 97;
             }
-            else if (char >= 48 && char <= 57){
+            else if (char >= 48 && char <= 57){ // 0-9
                 char -= 48;
                 char = cipher(char, shift, 10);
                 char += 48;
             }
+            // All other characters will be untouched.
 
             out += String.fromCharCode(char);
         }
@@ -69,6 +93,9 @@
         return out;
     }
 
+    /**
+     * Copy the content from the output textarea to the input
+     */
     function copyOut2In(){
         document.getElementById('InputString').value = document.getElementById('OutputString').value;
     }
