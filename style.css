@@ -16,3 +16,7 @@ label.textarea {
         display: inline;
     }
 }
+
+.controls {
+    padding: 0.2em 0 0.4em 0;
+}

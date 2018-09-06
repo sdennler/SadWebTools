@@ -1,0 +1,93 @@
+<!DOCTYPE HTML><html>
+<head>
+<title>Caesar Cipher</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="Ulli Meybohms HTML EDITOR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+</head>
+<body>
+
+<h1>Caesar Cipher</h1>
+
+<script>
+    function runCipher(mod = 1){
+        var InputString = document.getElementById('InputString');
+        var OutputString = document.getElementById('OutputString');
+        var shiftInput = document.getElementById('shift');
+        var shift = parseInt(shiftInput.value) * mod;
+        if(isNaN(shift)){
+            shift = 13;
+            shiftInput.value = shift;
+        }
+        OutputString.value = CaesarCipher(InputString.value, shift);
+    }
+
+    function breakIt(){
+        var InputString = document.getElementById('InputString');
+        var OutputString = document.getElementById('OutputString');
+        OutputString.value = "Let's try all:\n---\n";
+        for (var i = 1; i <= 25; i++) {
+            OutputString.value += i+': ';
+            OutputString.value += CaesarCipher(InputString.value, i);
+            OutputString.value += "\n---\n";
+        }
+    }
+
+    function CaesarCipher(input, shift){
+
+        function cipher(char, shift, charcount){
+            char = (char+shift) % charcount;
+            if(char < 0) char += charcount;
+            return char;
+        }
+
+        var out = '';
+
+        for (var i = 0; i < input.length; i++) {
+            var char = input.charCodeAt(i);
+
+            if(char >= 65 && char <= 90){
+                char -= 65;
+                char = cipher(char, shift, 26);
+                char += 65;
+            }
+            else if (char >= 97 && char <= 122){
+                char -= 97;
+                char = cipher(char, shift, 26);
+                char += 97;
+            }
+            else if (char >= 48 && char <= 57){
+                char -= 48;
+                char = cipher(char, shift, 10);
+                char += 48;
+            }
+
+            out += String.fromCharCode(char);
+        }
+
+        return out;
+    }
+</script>
+
+<form action="#" accept-charset="UTF-8">
+
+<textarea name="InputString" id="InputString" cols="120" rows="12"></textarea> <label for="InputString" class="textarea">In</label>
+
+<div class="controls">
+<label for="shift">Key:</label> <input type="number" id="shift" name="shift" min="-26" max="26" value="13" />
+<input type="Button" name="cipher" value="Cipher" onclick="runCipher();">
+<input type="Button" name="decipher" value="Decipher" onclick="runCipher(-1);">
+<input type="Button" name="break" value="Break it" onclick="breakIt();">
+</div>
+
+<textarea name="OutputString" id="OutputString" cols="120" rows="12"></textarea> <label for="InputString" class="textarea">Out</label>
+
+<div class="controls">
+<button type="reset" value="Reset">Clear</button>
+</div>
+
+</form>
+
+</body>
+</html>
