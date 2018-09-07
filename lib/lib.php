@@ -1,7 +1,12 @@
 <?php
 
-function redirectTo($url, $statusCode = 307){
-    static $http = array (
+/**
+ * Set the HTTP header for a redirect to the given URL.
+ * @param string $url
+ * @param int $statusCode Which status code to use. (Usefull: 307, 303, 301)
+ */
+function redirectToHttp($url, $statusCode = 307){
+    $http = array (
         100 => "HTTP/1.1 100 Continue",
         101 => "HTTP/1.1 101 Switching Protocols",
         200 => "HTTP/1.1 200 OK",
@@ -45,5 +50,3 @@ function redirectTo($url, $statusCode = 307){
     header($http[$statusCode]);
     header ("Location: $url");
 }
-
-redirectTo('sadConv.php');
