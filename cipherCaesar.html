@@ -39,7 +39,7 @@
         OutputString.value = "Let's try all:\n---\n";
         for (var i = 1; i <= 25; i++) {
             OutputString.value += i+': ';
-            OutputString.value += CaesarCipher(InputString.value, i);
+            OutputString.value += CaesarCipher(InputString.value, i * -1);
             OutputString.value += "\n---\n";
         }
     }
