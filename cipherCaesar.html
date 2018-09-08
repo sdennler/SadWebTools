@@ -86,13 +86,47 @@
         var InputString = document.getElementById('InputString');
         var OutputString = document.getElementById('OutputString');
 
-        OutputString.value = "Let's try 'em all:\n---\n";
-        for (var i = 0; i <= 26; i++) {
-            console.log('try '+i);
-            OutputString.value += i+': ';
-            OutputString.value += CaesarCipher(InputString.value, i * -1);
-            OutputString.value += "\n---\n";
+        var mostCommonChars = ['e', 't', 'a'];
+        var guesses = [];
+
+        for (var i = -26; i <= 26; i++) {
+            var text = CaesarCipher(InputString.value, i * -1);
+            var weight = 0;
+            frequencyAnalysis(text).forEach(function(f){ // Count how many times the most common chars are in the decihper.
+                if(mostCommonChars.indexOf(f[0]) >= 0){
+                    weight += f[1];
+                }
+                if(i < 1) weight--; // Priorize positive shifts as they are more likely.
+            });
+            guesses.push([i, weight, text]);
         }
+        guesses.sort(function(a, b){return -(a[1] - b[1]);}); // Sort by weight.
+
+        // Write the result to Out
+        OutputString.value = "Let's try 'em all:\n---\n";
+        guesses.forEach(function(g){
+            OutputString.value += g[0].toString().padStart(3) + ': ' + g[2] + "\n---\n";
+        });
+
+        // Write the frequency analysis of the cipher to Out
+        OutputString.value += "\nFrequency Analysis of the cipher:\n";
+        var frequency = frequencyAnalysis(InputString.value);
+        frequency.forEach(f => OutputString.value += f[0] + ': ' + f[1] + ' ');
+    }
+
+    /**
+     * Do a frequency analysis by counting how often each letter is in the input.
+     * @param {String} input
+     * @returns {Array} Array of [char, count] arrays
+     */
+    function frequencyAnalysis(input){
+        input = input.toLowerCase().match(/[a-z]/g); // Create array whit only a-z in it.
+        var counts = {};
+        input.forEach(c => counts[c] = 1 + (counts[c] || 0)); // Create object whit all characters as key and count as value.
+        var frequency = Object.keys(counts).sort(function(a, b){return -(counts[a] - counts[b]);}); // Create array whit the characters ordered by how often they are in the input.
+        var out = [];
+        frequency.forEach(c => out.push([c, counts[c]])); // Create array whit [char, count] elements.
+        return out;
     }
 
 
