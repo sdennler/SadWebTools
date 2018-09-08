@@ -30,21 +30,6 @@
     }
 
     /**
-     * Run brute force break which will output all possible solutions.
-     */
-    function breakIt(){
-        var InputString = document.getElementById('InputString');
-        var OutputString = document.getElementById('OutputString');
-
-        OutputString.value = "Let's try all:\n---\n";
-        for (var i = 1; i <= 25; i++) {
-            OutputString.value += i+': ';
-            OutputString.value += CaesarCipher(InputString.value, i * -1);
-            OutputString.value += "\n---\n";
-        }
-    }
-
-    /**
      * Calculate the Caesar Chipher
      * @param {String} input
      * @param {Integer} shift Number of steps, use negative numbers to decipher
@@ -85,13 +70,31 @@
                 char = cipher(char, shift, 10);
                 char += 48;
             }
-            // All other characters will be untouched.
+            // All other characters will be left untouched.
 
             out += String.fromCharCode(char);
         }
 
         return out;
     }
+
+
+    /**
+     * Run brute force break which will output all possible solutions.
+     */
+    function runBreakIt(){
+        var InputString = document.getElementById('InputString');
+        var OutputString = document.getElementById('OutputString');
+
+        OutputString.value = "Let's try 'em all:\n---\n";
+        for (var i = 0; i <= 26; i++) {
+            console.log('try '+i);
+            OutputString.value += i+': ';
+            OutputString.value += CaesarCipher(InputString.value, i * -1);
+            OutputString.value += "\n---\n";
+        }
+    }
+
 
     /**
      * Copy the content from the output textarea to the input
@@ -109,7 +112,7 @@
 <label for="shift">Key:</label> <input type="number" id="shift" name="shift" min="-26" max="26" value="13" />
 <input type="Button" name="cipher" value="Cipher" onclick="runCipher();">
 <input type="Button" name="decipher" value="Decipher" onclick="runCipher(-1);">
-<input type="Button" name="break" value="Break it" onclick="breakIt();">
+<input type="Button" name="break" value="Break it" onclick="runBreakIt();">
 </div>
 
 <textarea name="OutputString" id="OutputString" cols="120" rows="12"></textarea> <label for="InputString" class="textarea">Out</label>
