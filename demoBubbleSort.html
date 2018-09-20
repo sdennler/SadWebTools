@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<title>Bubble Sort Demo</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="Ulli Meybohms HTML EDITOR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+    .controls {
+        padding: 0.2em 0 0.4em 0;
+    }
+    .counter{
+        display: inline-block;
+        position: relative;
+        width: 100px;
+        height: 80px;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+    }
+    .counter span{
+        display: table;
+        text-align: center;
+        font-size: xx-large;
+        width: 100%;
+        padding: 10px 0;
+    }
+    #bubbles{
+        position: relative;
+        height: 80px;
+        margin: 10px 0;
+        padding: 10px;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+    .bubble{
+        position: absolute;
+        padding: 10px;
+        height: 42px;
+        width: 42px;
+        border-radius: 50%;
+        text-align: center;
+        border-top: 5pt solid rgba(0,0,0, 0.3);
+        border-left: 5pt solid rgba(0,0,0, 0.3);
+        border-bottom: 8pt solid rgba(0,0,0, 0.5);
+        border-right: 5pt solid rgba(0,0,0, 0.5);
+        background-image: radial-gradient(rgba(0,0,0, 0.0), rgba(0,0,0, 0.4));
+        transition: all 1s ease;
+    }
+    #worker{
+        position: relative;
+        top: -30px;
+        left: 22px;
+        transition: all 1s ease;
+    }
+</style>
+</head>
+<body>
+
+<h1>Bubble Sort Demo</h1>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+window.addEventListener('load', () => {
+    
+    new Vue({
+        el: '#app',
+        data: {
+            bubbles: [
+                {value: 1, position: 0, color: '#96BBBB'},
+                {value: 3, position: 1, color: '#618985'},
+                {value: 5, position: 2, color: '#5B6E91'},
+                {value: 4, position: 3, color: '#7D4E57'},
+                {value: 2, position: 4, color: '#D66853'}
+            ],
+            passes: 0,
+            switched: 0,
+            changed: false,
+            current: 0,
+            bubbleStyle: function(bubble) { return {
+                left: (bubble.position * 80 + 10) + 'px',
+                backgroundColor: bubble.color
+            };},
+            workerStyle: function(current) { return {
+                left: (current * 80 + 22) + 'px'
+            };}
+        },
+        methods: {
+            nextStep: function(event) {
+                var leftBubble = this.bubbles.filter(b => b.position === this.current)[0];
+                var rightBubble = this.bubbles.filter(b => b.position === this.current + 1)[0];
+                if(typeof rightBubble === 'undefined'){ // If we reached the second last bubble
+                    if(this.changed === false){
+                        console.log('huzza');
+                        return;
+                    }
+                    this.current = 0;
+                    this.passes++;
+                    this.changed = false;
+                    return;
+                }
+                console.log(leftBubble.value, '>', rightBubble.value);
+                if(leftBubble.value > rightBubble.value){ // If we need to switch the current bubble
+                    var p = leftBubble.position;
+                    leftBubble.position = rightBubble.position;
+                    rightBubble.position = p;
+                    this.changed = true;
+                    this.switched++;
+                }
+                this.current++;
+            },
+        }
+    });
+
+})
+</script>
+
+<div id="app">
+
+    <div class="controls">
+        <div class="counter">Passes<span>{{passes}}</span></div>
+        <div class="counter">Current<span>{{current}}</span></div>
+        <div class="counter">Switched<span>{{switched}}</span></div>
+        <div class="counter">Changes<span v-if="changed">👍</span><span v-if="changed == false">👎</span></div>
+        <button v-on:click="nextStep">Do one step</button>
+    </div>
+
+    <div id="bubbles">
+        <input v-for="bubble in bubbles" v-bind:style="bubbleStyle(bubble)" v-model.number="bubble.value" v-on:change="changed = true" class="bubble" type="number" min="0" max="42" />
+    </div>
+
+    <svg id="worker" v-bind:style="workerStyle(current)" xmlns="http://www.w3.org/2000/svg" height="51.119mm" width="35.572mm" version="1.1" viewBox="0 0 122.4992 181.12939">
+     <title id="title">Sort Robot</title>
+     <defs>
+      <linearGradient id="a">
+       <stop offset="0"/>
+       <stop stop-color="#d8e8d0" offset="1"/>
+      </linearGradient>
+      <linearGradient id="j" y2="105.72" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="122.37" gradientTransform="matrix(.61063 0 0 .66391 -31.064 -29.308)" y1="185.92" x1="34.649"/>
+      <linearGradient id="i" y2="244.19" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="105.46" gradientTransform="matrix(.61063 0 0 .66391 -22.698 -121.05)" y1="262.76" x1="54.782"/>
+      <linearGradient id="d" y2="335.87" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="207.87" gradientTransform="matrix(.61063 0 0 .66391 -20.427 -121.05)" y1="426.58" x1="45.527"/>
+      <linearGradient id="c" y2="335.87" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="207.87" gradientTransform="matrix(.61063 0 0 .66391 4.5549 -121.05)" y1="426.58" x1="45.527"/>
+      <linearGradient id="b" y2="335.87" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="207.87" gradientTransform="matrix(.61063 0 0 .66391 -20.041 -121.05)" y1="426.58" x1="45.527"/>
+      <linearGradient id="e" y2="315.93" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="151.92" gradientTransform="matrix(.61063 0 0 .66391 -20.041 -121.05)" y1="316.09" x1="174.58"/>
+      <linearGradient id="h" y2="117.74" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="243.95" gradientTransform="matrix(.61063 0 0 .66391 -31.064 -29.308)" y1="171" x1="172.28"/>
+      <linearGradient id="g" y2="244.19" xlink:href="#a" gradientUnits="userSpaceOnUse" x2="105.46" gradientTransform="matrix(.61063 0 0 .66391 53.02 -121.05)" y1="262.76" x1="54.782"/>
+      <linearGradient id="f" y2="267.26" gradientUnits="userSpaceOnUse" x2="132.7" gradientTransform="matrix(.61063 0 0 .66391 -20.041 -121.05)" y1="288.45" x1="132.77">
+       <stop stop-color="#f55" offset="0"/>
+       <stop stop-color="#f55" stop-opacity="0" offset="1"/>
+      </linearGradient>
+     </defs>
+     <g stroke-linejoin="bevel" stroke="#0c0606" stroke-miterlimit="2" stroke-width="1.2734">
+      <g id="body">
+       <path d="m41.016 136.15v36.041h-2.6167v8.2989h20.719v-8.2989h-2.6179v-36.041h-15.484z" fill="url(#d)"/>
+       <ellipse rx="1.0795" ry="1.1736" cy="165.51" cx="52.205" fill="url(#d)"/>
+       <ellipse rx="1.0795" ry="1.1736" cy="160.98" cx="52.205" fill="url(#d)"/>
+       <path d="m65.998 136.15v36.041h-2.6167v8.2989h20.719v-8.2989h-2.6179v-36.041h-15.484z" fill="url(#c)"/>
+       <ellipse rx="1.0795" ry="1.1736" cy="165.51" cx="77.187" fill="url(#c)"/>
+       <ellipse rx="1.0795" ry="1.1736" cy="160.98" cx="77.187" fill="url(#c)"/>
+       <path d="m53.465 23.377a2.617 2.8453 0 0 0 -2.6167 2.845 2.617 2.8453 0 0 0 1.5803 2.6129l1.5504 10.073h-7.3646v30.824h29.223v-30.824h-7.3646l1.5504-10.073a2.617 2.8453 0 0 0 1.5803 -2.6129 2.617 2.8453 0 0 0 -2.6167 -2.845 2.617 2.8453 0 0 0 -2.6167 2.845 2.617 2.8453 0 0 0 1.1497 2.3548l-1.5898 10.331h-9.4088l-1.5898-10.331a2.617 2.8453 0 0 0 1.1497 -2.3548 2.617 2.8453 0 0 0 -2.6167 -2.845z" fill="url(#b)"/>
+       <path d="m44.032 42.267a7.6624 6.2435 0 0 0 -7.6617 6.2439 7.6624 6.2435 0 0 0 7.6617 6.2429 7.6624 6.2435 0 0 0 0.33402 -0.009v-12.464a7.6624 6.2435 0 0 0 -0.33402 -0.0139z" fill="url(#b)"/>
+       <path d="m78.467 54.754a7.6624 6.2435 0 0 0 7.6617 -6.2439 7.6624 6.2435 0 0 0 -7.6617 -6.2429 7.6624 6.2435 0 0 0 -0.33402 0.009v12.464a7.6624 6.2435 0 0 0 0.33402 0.0139z" fill="url(#b)"/>
+       <ellipse rx="4.1981" ry="4.5644" cy="48.511" cx="54.198" fill="#e6e6e6"/>
+       <ellipse rx="4.1981" ry="4.5644" cy="48.511" cx="68.301" fill="#e6e6e6"/>
+       <ellipse rx="8.0691" ry="2.5489" cy="60.663" cx="61.25" fill="url(#f)"/>
+       <rect height="10.73" width="90.058" y="76.648" x="16.221" fill="url(#b)"/>
+       <rect height="59.278" width="49.287" y="73.052" x="36.606" fill="url(#b)"/>
+       <ellipse rx="2.6215" ry="2.8503" cy="83.69" cx="77.11" fill="url(#e)"/>
+       <ellipse rx="2.6215" ry="2.8503" cy="93.246" cx="77.11" fill="url(#e)"/>
+      </g>
+      <g id="pupils">
+       <ellipse rx=".61683" ry=".67065" cy="46.888" cx="54.133"/>
+       <ellipse rx=".61683" ry=".67065" cy="46.888" cx="68.32"/>
+      </g>
+      <g id="arm0">
+       <rect height="47.281" width="8.6357" y="26.855" x="19.072" fill="url(#j)"/>
+       <path d="m23.387 24.725a17.699 11.38 0 0 0 17.7 -11.378 17.699 11.38 0 0 0 -2.512 -5.8224 15.775 7.7382 0 0 1 -15.188 5.6704 15.775 7.7382 0 0 1 -15.194 -5.6563 17.699 11.38 0 0 0 -2.4993 5.8083 17.699 11.38 0 0 0 17.693 11.378z" fill="url(#i)"/>
+      </g>
+      <g id="arm1">
+       <rect height="47.281" width="8.6357" y="26.855" x="94.791" fill="url(#h)"/>
+       <path d="m99.106 24.725a17.699 11.38 0 0 0 17.704 -11.378 17.699 11.38 0 0 0 -2.52 -5.8224 15.775 7.7382 0 0 1 -15.184 5.6704 15.775 7.7382 0 0 1 -15.194 -5.6563 17.699 11.38 0 0 0 -2.5 5.8083 17.699 11.38 0 0 0 17.694 11.378z" fill="url(#g)"/>
+      </g>
+     </g>
+    </svg>
+
+</div>
+
+</body>
+</html>
