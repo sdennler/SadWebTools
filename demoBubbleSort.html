@@ -6,6 +6,9 @@
 <meta name="generator" content="Ulli Meybohms HTML EDITOR">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <style>
+    [v-cloak] {
+        display: none;
+    }
     .controls {
         padding: 0.2em 0 0.4em 0;
     }
@@ -37,6 +40,13 @@
         font-size: xx-large;
         width: 100%;
         padding: 10px 0;
+    }
+    #addBubble{
+        position: relative;
+        height: 75px;
+        width: 75px;
+        top: 2px;
+        font-size: 40px;
     }
     #bubbles{
         position: relative;
@@ -79,24 +89,25 @@
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
 window.addEventListener('load', () => {
-    
+
+    function color(index){
+        return '#' + (5992081 + (index * 400116)).toString(16)
+    }
+
     new Vue({
         el: '#app',
         data: {
-            bubbles: [
-                {value: 1, position: 0, color: '#96BBBB'},
-                {value: 3, position: 1, color: '#618985'},
-                {value: 5, position: 2, color: '#5B6E91'},
-                {value: 4, position: 3, color: '#7D4E57'},
-                {value: 2, position: 4, color: '#D66853'}
-            ],
+            bubbles: [],
             passes: 0,
             switched: 0,
             changed: false,
             current: 0,
             bubbleStyle: function(bubble) { return {
                 left: (bubble.position * 80 + 10) + 'px',
-                backgroundColor: bubble.color
+                backgroundColor: color(bubble.value)
+            };},
+            addBubbleStyle: function(bubbles) { return {
+                left: (bubbles.length * 80 + 10) + 'px'
             };},
             workerStyle: function(current, workerVisible) {
                 if(workerVisible) return {
@@ -112,8 +123,16 @@ window.addEventListener('load', () => {
             speak: false
         },
         methods: {
-            nextStep: function(event) {
-                if(!this.workerVisible){
+            addBubble: function(count=1){
+                for(var i=0; i < count; i++){
+                    this.bubbles.push({value: Math.floor((Math.random() * 9) + 1), position: this.bubbles.length});
+                }
+                if(this.workerVisible) {
+                    this.changed = true;
+                }
+            },
+            nextStep: function(event) { // This is called for each step
+                if(!this.workerVisible){ // Display the robot
                     this.workerVisible = true;
                     setTimeout(() => this.speak = 'Hello', 1000);
                     return;
@@ -141,13 +160,16 @@ window.addEventListener('load', () => {
                 }
                 this.current++;
             },
+        },
+        beforeMount(){
+            this.addBubble(3);
         }
     });
 
 })
 </script>
 
-<div id="app">
+<div id="app" v-cloak>
 
     <div class="controls">
         <div class="counter">Passes<span>{{passes}}</span></div>
@@ -159,6 +181,7 @@ window.addEventListener('load', () => {
 
     <div id="bubbles">
         <input v-for="bubble in bubbles" v-bind:style="bubbleStyle(bubble)" v-model.number="bubble.value" v-on:change="changed = true; speak = false;" class="bubble" type="number" min="0" max="42" />
+        <button id="addBubble" v-on:click="addBubble(1)" v-bind:style="addBubbleStyle(bubbles)">+</button>
     </div>
 
     <svg id="worker" v-bind:style="workerStyle(current, workerVisible)" xmlns="http://www.w3.org/2000/svg" height="51.119mm" width="75mm" version="1.1">
