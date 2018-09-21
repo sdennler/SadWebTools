@@ -20,6 +20,17 @@
         text-align: center;
         font-weight: bold;
     }
+    .stepp{
+        display: inline-block;
+        position: relative;
+        width: 100px;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        background-color: #f5103b;
+    }
     .counter span{
         display: table;
         text-align: center;
@@ -46,20 +57,24 @@
         border-left: 5pt solid rgba(0,0,0, 0.3);
         border-bottom: 8pt solid rgba(0,0,0, 0.5);
         border-right: 5pt solid rgba(0,0,0, 0.5);
-        background-image: radial-gradient(rgba(0,0,0, 0.0), rgba(0,0,0, 0.4));
+        background-image: radial-gradient(rgba(0,0,0, 0.0), rgba(0,0,0, 0.2));
         transition: all 1s ease;
     }
     #worker{
         position: relative;
-        top: -30px;
-        left: 22px;
+        top: -100px;
+        left: -100px;
         transition: all 1s ease;
+    }
+    #speak{
     }
 </style>
 </head>
 <body>
 
 <h1>Bubble Sort Demo</h1>
+
+<p>The Bubble Sort Algorithm is a simple but slow way to sort numbers and other stuff on a computer.<br />Below you can set some numbers and by repeatedly clicking on "Sort it!" you can watch step by step how the algorithm works.</p>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script>
@@ -83,17 +98,32 @@ window.addEventListener('load', () => {
                 left: (bubble.position * 80 + 10) + 'px',
                 backgroundColor: bubble.color
             };},
-            workerStyle: function(current) { return {
-                left: (current * 80 + 22) + 'px'
-            };}
+            workerStyle: function(current, workerVisible) {
+                if(workerVisible) return {
+                    left: (current * 80 + 26) + 'px',
+                    top: '-30px'
+                };
+                else return {
+                    top: '50px',
+                    left: '-200px',
+                };
+            },
+            workerVisible: false,
+            speak: false
         },
         methods: {
             nextStep: function(event) {
+                if(!this.workerVisible){
+                    this.workerVisible = true;
+                    setTimeout(() => this.speak = 'Hello', 1000);
+                    return;
+                }
+                this.speak = false;
                 var leftBubble = this.bubbles.filter(b => b.position === this.current)[0];
                 var rightBubble = this.bubbles.filter(b => b.position === this.current + 1)[0];
                 if(typeof rightBubble === 'undefined'){ // If we reached the second last bubble
                     if(this.changed === false){
-                        console.log('huzza');
+                        this.speak = 'Done';
                         return;
                     }
                     this.current = 0;
@@ -121,17 +151,17 @@ window.addEventListener('load', () => {
 
     <div class="controls">
         <div class="counter">Passes<span>{{passes}}</span></div>
-        <div class="counter">Current<span>{{current}}</span></div>
         <div class="counter">Switched<span>{{switched}}</span></div>
         <div class="counter">Changes<span v-if="changed">👍</span><span v-if="changed == false">👎</span></div>
-        <button v-on:click="nextStep">Do one step</button>
+        <!-- <div class="counter">Current<span>{{current}}</span></div> -->
+        <button class="stepp" v-on:click="nextStep">Sort it!</button>
     </div>
 
     <div id="bubbles">
-        <input v-for="bubble in bubbles" v-bind:style="bubbleStyle(bubble)" v-model.number="bubble.value" v-on:change="changed = true" class="bubble" type="number" min="0" max="42" />
+        <input v-for="bubble in bubbles" v-bind:style="bubbleStyle(bubble)" v-model.number="bubble.value" v-on:change="changed = true; speak = false;" class="bubble" type="number" min="0" max="42" />
     </div>
 
-    <svg id="worker" v-bind:style="workerStyle(current)" xmlns="http://www.w3.org/2000/svg" height="51.119mm" width="35.572mm" version="1.1" viewBox="0 0 122.4992 181.12939">
+    <svg id="worker" v-bind:style="workerStyle(current, workerVisible)" xmlns="http://www.w3.org/2000/svg" height="51.119mm" width="75mm" version="1.1">
      <title id="title">Sort Robot</title>
      <defs>
       <linearGradient id="a">
@@ -170,7 +200,7 @@ window.addEventListener('load', () => {
        <ellipse rx="2.6215" ry="2.8503" cy="83.69" cx="77.11" fill="url(#e)"/>
        <ellipse rx="2.6215" ry="2.8503" cy="93.246" cx="77.11" fill="url(#e)"/>
       </g>
-      <g id="pupils">
+      <g id="pupils" v-bind:transform="speak ? 'translate(0, 1.8)' : ''">
        <ellipse rx=".61683" ry=".67065" cy="46.888" cx="54.133"/>
        <ellipse rx=".61683" ry=".67065" cy="46.888" cx="68.32"/>
       </g>
@@ -181,6 +211,10 @@ window.addEventListener('load', () => {
       <g id="arm1">
        <rect height="47.281" width="8.6357" y="26.855" x="94.791" fill="url(#h)"/>
        <path d="m99.106 24.725a17.699 11.38 0 0 0 17.704 -11.378 17.699 11.38 0 0 0 -2.52 -5.8224 15.775 7.7382 0 0 1 -15.184 5.6704 15.775 7.7382 0 0 1 -15.194 -5.6563 17.699 11.38 0 0 0 -2.5 5.8083 17.699 11.38 0 0 0 17.694 11.378z" fill="url(#g)"/>
+      </g>
+      <g id="speak" v-if="speak">
+       <path d="m115.24 64.617h150v59.278h-150v-40.245l-42.929-21.976 42.929 13.889z" fill="#fff"/>
+       <text style="word-spacing:0px;letter-spacing:0px;text-anchor:middle;text-align:center" font-size="40px" y="108.83635" x="190.2426" font-family="Sans" xml:space="preserve"><tspan id="speakText" y="108.83635" x="190.2426">{{speak}}</tspan></text>
       </g>
      </g>
     </svg>
