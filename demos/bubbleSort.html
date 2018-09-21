@@ -90,6 +90,9 @@
 <script>
 window.addEventListener('load', () => {
 
+    /**
+     * Get a color for the given index.
+     */
     function color(index){
         const colors = ['#759e98','#63a6a2','#49adac','#44b1b1','#4db3b3','#56b4b4','#5eb6b6','#6db7c9','#7bb7dd','#87b7f1','#9db7ec','#FFFFFF','#bab6b7','#c9b782','#d2b846','#cbb234','#c0a83d','#b49e45','#a8954b',];
         return colors[index%colors.length];
@@ -98,19 +101,19 @@ window.addEventListener('load', () => {
     new Vue({
         el: '#app',
         data: {
-            bubbles: [],
-            passes: 0,
-            switched: 0,
-            changed: false,
-            current: 0,
-            bubbleStyle: function(bubble) { return {
+            bubbles: [], // Will a object whit attributes value and position for each bubble which Vue will draw
+            round: 0, // Number of completed rounds
+            switched: 0, // Number of bubbles switched
+            changed: false, // Did we switch a bubble in this round or was there some changes by the user?
+            current: 0, // Current position of the worker
+            bubbleStyle: function(bubble) { return { // Calculate position and color of the bubble
                 left: (bubble.position * 80 + 10) + 'px',
                 backgroundColor: color(bubble.value)
             };},
-            addBubbleStyle: function(bubbles) { return {
+            addBubbleStyle: function(bubbles) { return { // Calculate the position of the bubble
                 left: (bubbles.length * 80 + 10) + 'px'
             };},
-            workerStyle: function(current, workerVisible) {
+            workerStyle: function(current, workerVisible) { // Calculate the postion and visibility of the worker
                 if(workerVisible) return {
                     left: (current * 80 + 26) + 'px',
                     top: '-30px'
@@ -120,43 +123,41 @@ window.addEventListener('load', () => {
                     left: '-200px',
                 };
             },
-            workerVisible: false,
-            speak: false
+            workerVisible: false, // Is the worker visible? Only in the beginning he is not visible
+            speak: false // False for no speak bubble or text of the speak bubble
         },
         methods: {
-            addBubble: function(count=1){
+            addBubble: function(count=1){ // Add a new bubble to the list
                 for(var i=0; i < count; i++){
                     this.bubbles.push({value: Math.floor((Math.random() * 9) + 1), position: this.bubbles.length});
                 }
                 this.setChanged();
             },
-            setChanged: function(){
-                console.log(this.workerVisible);
+            setChanged: function(){ // Set changed only if the worker is already visible
                 if(this.workerVisible) {
                     this.changed = true;
                     this.speak = false;
                 }
             },
             nextStep: function(event) { // This is called for each step
-                if(!this.workerVisible){ // Display the robot
+                if(!this.workerVisible){ // Display the worker
                     this.workerVisible = true;
                     setTimeout(() => this.speak = 'Hello', 1000);
                     return;
                 }
                 this.speak = false;
-                var leftBubble = this.bubbles.filter(b => b.position === this.current)[0];
-                var rightBubble = this.bubbles.filter(b => b.position === this.current + 1)[0];
-                if(typeof rightBubble === 'undefined'){ // If we reached the second last bubble
-                    if(this.changed === false){
+                var leftBubble = this.bubbles.filter(b => b.position === this.current)[0]; // Find the bubble at the current position
+                var rightBubble = this.bubbles.filter(b => b.position === this.current + 1)[0]; // Find the bubble at the next position
+                if(typeof rightBubble === 'undefined'){ // If we reached the last bubble
+                    if(this.changed === false){ // If we didn't change any thing this round we are done
                         this.speak = 'Done';
                         return;
                     }
-                    this.current = 0;
-                    this.passes++;
+                    this.current = 0; // If we did change some thing this round we should start over
+                    this.round++;
                     this.changed = false;
                     return;
                 }
-                console.log(leftBubble.value, '>', rightBubble.value);
                 if(leftBubble.value > rightBubble.value){ // If we need to switch the current bubble
                     var p = leftBubble.position;
                     leftBubble.position = rightBubble.position;
@@ -164,10 +165,10 @@ window.addEventListener('load', () => {
                     this.changed = true;
                     this.switched++;
                 }
-                this.current++;
+                this.current++; // Advance to next bubble
             },
         },
-        beforeMount(){
+        beforeMount(){ // Called on startup
             this.addBubble(3);
         }
     });
@@ -178,7 +179,7 @@ window.addEventListener('load', () => {
 <div id="app" v-cloak>
 
     <div class="controls">
-        <div class="counter">Passes<span>{{passes}}</span></div>
+        <div class="counter">Rounds<span>{{round}}</span></div>
         <div class="counter">Switched<span>{{switched}}</span></div>
         <div class="counter">Changes<span v-if="changed">👍</span><span v-if="changed == false">👎</span></div>
         <!-- <div class="counter">Current<span>{{current}}</span></div> -->
