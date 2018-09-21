@@ -128,8 +128,13 @@ window.addEventListener('load', () => {
                 for(var i=0; i < count; i++){
                     this.bubbles.push({value: Math.floor((Math.random() * 9) + 1), position: this.bubbles.length});
                 }
+                this.setChanged();
+            },
+            setChanged: function(){
+                console.log(this.workerVisible);
                 if(this.workerVisible) {
                     this.changed = true;
+                    this.speak = false;
                 }
             },
             nextStep: function(event) { // This is called for each step
@@ -181,7 +186,7 @@ window.addEventListener('load', () => {
     </div>
 
     <div id="bubbles">
-        <input v-for="bubble in bubbles" v-bind:style="bubbleStyle(bubble)" v-model.number="bubble.value" v-on:change="changed = true; speak = false;" class="bubble" type="number" min="0" max="42" />
+        <input v-for="bubble in bubbles" v-bind:style="bubbleStyle(bubble)" v-model.number="bubble.value" v-on:change="setChanged()" class="bubble" type="number" min="0" max="42" />
         <button id="addBubble" v-on:click="addBubble(1)" v-bind:style="addBubbleStyle(bubbles)">+</button>
     </div>
 
