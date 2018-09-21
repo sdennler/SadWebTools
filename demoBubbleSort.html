@@ -91,7 +91,8 @@
 window.addEventListener('load', () => {
 
     function color(index){
-        return '#' + (5992081 + (index * 400116)).toString(16)
+        const colors = ['#759e98','#63a6a2','#49adac','#44b1b1','#4db3b3','#56b4b4','#5eb6b6','#6db7c9','#7bb7dd','#87b7f1','#9db7ec','#FFFFFF','#bab6b7','#c9b782','#d2b846','#cbb234','#c0a83d','#b49e45','#a8954b',];
+        return colors[index%colors.length];
     }
 
     new Vue({
