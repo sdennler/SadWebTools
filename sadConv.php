@@ -109,6 +109,17 @@ function tags2upper($input){
     return preg_replace("/(<\/?)(\w+)([^>]*>)/e", "'\\1'.strtoupper('\\2').'\\3'", $input);
 }
 
+function countChar($input){
+    $count['Bytes'] = strlen($input);
+    $count['MB_Len'] = mb_strlen($input, 'UTF-8');
+    $count['Iconv_Len'] = iconv_strlen($input, 'UTF-8');
+    $count['Graphemes'] = grapheme_strlen($input);
+    foreach($count as $key => $value){
+        $out .= str_pad($key.': ', 11, ' ', STR_PAD_RIGHT).str_pad($value, 5, ' ', STR_PAD_LEFT)."\n";
+    }
+    return $out;
+}
+
 
 /**********************
  * Do the conversions *
@@ -150,7 +161,7 @@ class sadConv{
         'hourdec2hourmin'  => array('Hour decimal 2 Hour sexagesimal', 'hourDec2hurSex', 'hourSex2hourDec'),
         'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
         'tableCols'        => array('Table Col List', 'tableColEncode', null),
-        'countChar'        => array('Count characters', 'strlen', null),
+        'countChar'        => array('Count', 'countChar', null),
     );
 
     public function __construct($InputString, $Method, $Way, $TimeZone){
@@ -171,7 +182,7 @@ class sadConv{
 
         $timeZones = $this->getOptionList(timezone_identifiers_list(), $this->timeZone, false);
 
-        $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self" accept-charset="ISO-8859-1">'."\n".
+        $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self" accept-charset="utf-8">'."\n".
                 '<textarea name="InputString" id="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <label for="InputString" class="textarea">In</label><br />'."\n".
                 '<select name="Method" size="1">'."\n".$methodList.'</select>'."\n".
                 '<div class="options">&nbsp;<input type="Radio" name="Way" value="decode"'.($this->decode?' checked="checked"':'').' /><label for="Way">decode</label>&nbsp;<input type="Radio" name="Way" value="encode"'.(!$this->decode?' checked="checked"':'').' /><label for="Way">encode</label>'."\n".
