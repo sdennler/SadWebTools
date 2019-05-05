@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Mini challenge: Departure time</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<script type="text/javascript">
+
+	window.addEventListener('load', function () {
+
+		var $element = document.getElementById('time');
+
+		function timer(){
+			$minutes = new Date().getMinutes();
+			if($minutes > 30) $minutes -= 30;
+			if($minutes == 0 || $minutes == 30) {
+				$text = `The bus is departing now.`;
+			}
+			else {
+				let remaining = 30 - $minutes;
+				$text = `Next departure is in ${remaining} minutes.`;
+			}
+
+			$element.innerHTML = $text;
+			console.log($minutes, $text);
+
+			setTimeout(timer, 10000);
+		}
+
+		timer();
+
+	}, false);
+
+	</script>
+</head>
+
+<body>
+
+	<section>
+
+		<article>
+			<header>
+				<h2>Mini challenge: Departure time</h2>
+			</header>
+			<p id="time">Currently no time data available.</p>
+		</article>
+
+	</section>
+
+	<aside>
+		<h3>Challenge Description</h3>
+		<p>Imagine a bus driving between two terminals at an airport. The bus departs at every full- and half-hour.<br/>Your program should be able to show the remaining time until the bus will depart again.<br/>As always you can add more features (like more buses, more terminals or more daparture times etc.) to make the challenge more difficult for you.</p>
+	</aside>
+
+</body>
+
+</html>
