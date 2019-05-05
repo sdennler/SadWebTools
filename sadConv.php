@@ -109,6 +109,19 @@ function tags2upper($input){
     return preg_replace("/(<\/?)(\w+)([^>]*>)/e", "'\\1'.strtoupper('\\2').'\\3'", $input);
 }
 
+/**
+ * Based on "nmmm at nmmm dot nu"s code
+ * @see https://www.php.net/manual/en/function.hash.php#104987
+ */
+function hashes($input){
+    $out = sprintf("%-12s %6s %s\n", 'Algorithm', 'Lenght', 'Hash');
+    foreach(hash_algos() as $algo){
+        $hash = hash($algo, $input, false);
+        $out .= sprintf("%-12s %6d %s\n", $algo, strlen($hash), $hash);
+    }
+    return $out;
+}
+
 
 /**********************
  * Do the conversions *
@@ -133,6 +146,7 @@ class sadConv{
         'url'              => array('URL', 'urlencode', 'urldecode'),
         'utf8'             => array('UTF8', 'utf8_encode', 'utf8_decode'),
         'md5'              => array('MD5', 'md5', false),
+        'hashes'           => array('Hashes', 'hashes', false),
         'soundex'          => array('Soundex', 'soundex', false),
         'rot13'            => array('ROT13', 'str_rot13', 'str_rot13'),
         'scramble_words'   => array('Scramble Words', 'scramble_words', null),
