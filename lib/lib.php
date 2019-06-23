@@ -50,3 +50,44 @@ function redirectToHttp($url, $statusCode = 307){
     header($http[$statusCode]);
     header ("Location: $url");
 }
+
+class path {
+    protected $path = [];
+
+    public function down($name){
+        array_push($this->path, $name);
+    }
+
+    public function up(){
+        array_pop($this->path);
+    }
+
+    public function pwd(){
+        return '/'.implode('/', $this->path);
+    }
+}
+
+class counter {
+    protected $counter = [];
+
+    public function add($name, $increment = 1){
+        if(isset($this->counter[$name])){
+            $this->counter[$name] += $increment;
+        }
+        else {
+            $this->counter[$name] = $increment;
+        }
+    }
+
+    public function get($name = null){
+        if($name === null){
+            return $this->counter;
+        }
+        elseif(isset($this->counter[$name])){
+            return $this->counter[$name];
+        }
+        else{
+            return 0;
+        }
+    }
+}
