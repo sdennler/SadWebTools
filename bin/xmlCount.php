@@ -6,26 +6,41 @@ $file = $argv[1];
 include_once dirname(__FILE__).'/../lib/lib.php';
 
 $path = new path();
-$counter = new counter();
+$nodeCounter = new counter();
+$nodeWithContentCounter = new counter();
+$curNodeHasData = false;
 
 
 function startElement($parser, $name, $attr)
 {
-    global $path, $counter;
+    global $path, $nodeCounter, $curNodeHasData;
     $path->down($name);
-    $counter->add($path->pwd());
+    $nodeCounter->add($path->pwd());
+    $curNodeHasData = false;
 }
 
 function endElement($parser, $name)
 {
-    global $path;
+    global $path, $curNodeHasData, $nodeWithContentCounter;
+    if($curNodeHasData){
+        $nodeWithContentCounter->add($path->pwd());
+    }
     $path->up();
+}
+
+function content($parser, $data)
+{
+    global $curNodeHasData;
+    if(trim($data)){
+        $curNodeHasData = true;
+    }
 }
 
 
 $xml_parser = xml_parser_create();
 xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING, false);
 xml_set_element_handler($xml_parser, 'startElement', 'endElement');
+xml_set_character_data_handler($xml_parser, 'content');
 if (!($fp = fopen($file, 'r'))) {
     die('Could not open XML');
 }
@@ -39,7 +54,12 @@ while ($data = fread($fp, 4096)) {
 }
 xml_parser_free($xml_parser);
 
+echo "All nodes:\n";
+$counts = $nodeCounter->get();
+ksort($counts);
+print_r($counts);
 
-$counts = $counter->get();
+echo "All non empty nodes:\n";
+$counts = $nodeWithContentCounter->get();
 ksort($counts);
 print_r($counts);
