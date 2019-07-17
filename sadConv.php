@@ -158,6 +158,7 @@ class sadConv{
         'tags2lower'       => array('Tags2lower', 'tags2lower', 'tags2upper'),
         'strtoupper'       => array('String to upper', 'strtoupper', 'strtolower'),
         'ucwords'          => array('First in word to upper', 'ucwords', null),
+        'reverse'          => array('String reverse', 'strrev', 'strrev'),
         'ustamp'           => array('Unix time stamp', 'strtotime', 'uStamp2Date'),
         'ustampmillis'     => array('Unix time stamp (milliseconds)', null, 'uStampMillis2Date'),
         'dateTime2Iso8601' => array('DateTime/zone to ISO 8601', 'dateTime2Iso8601', null),
