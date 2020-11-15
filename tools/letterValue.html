@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Letter Value Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    textarea {width: 100%; height: 4em;}
+    fieldset {margin-top: 1em;}
+    input {margin-bottom: 0.5em;}
+    #inputAlphabet {width: 100%;}
+    h4 {margin-bottom: 0;}
+</style>
+
+</head>
+<body>
+
+<header>
+    <h1>Letter Value Calculator</h1>
+</header>
+
+<section>
+
+    <form name="calc">
+        <fieldset>
+            <legend>Basic in/output</legend>
+            <label for="ioLetter">Text</label><br>
+            <textarea type="text" id="ioLetter" placeholder="Your text..." autofocus spellcheck></textarea><br>
+            <label for="ioValue">Value</label><br>
+            <textarea type="text" id="ioValue" placeholder="Your numbers..."></textarea><br>
+            <label for="ioValueSeparator">Value&nbsp;Separator</label>
+            <input type="text" id="ioValueSeparator" value="|">
+        </fieldset>
+
+        <fieldset>
+            <legend>Alphabet</legend>
+            <label for="inputAlphabet">List of groups of characters with the same value</label><br>
+            <input type="text" id="inputAlphabet" placeholder="A B C ..." value="Aa Bb Cc Dd Ee Ff Gg Hh Ii Jj Kk Ll Mm Nn Oo Pp Qq Rr Ss Tt Uu Vv Ww Xx Yy Zz"><br>
+            <label for="inputAlphabetStartValue">Start&nbsp;Value</label>
+            <input type="number" id="inputAlphabetStartValue" value="1">
+            <label for="inputAlphabetGroupSeparator">Group&nbsp;Separator</label>
+            <input type="text" id="inputAlphabetGroupSeparator" value=" ">
+            <label for="inputAlphabetCharacterSeparator">Character&nbsp;Separator</label>
+            <input type="text" id="inputAlphabetCharacterSeparator" value="">
+        </fieldset>
+
+        <fieldset>
+            <legend>Extended Output</legend>
+            <label for="outputTotal">Total</label>
+            <input type="text" id="outputTotal" readonly><br>
+            <label for="outputCrossTotal">Cross Total</label>
+            <input type="text" id="outputCrossTotal" readonly><br>
+            <label for="outputDebug">Debug</label><br>
+            <textarea type="text" id="outputDebug"></textarea><br>
+        </fieldset>
+    </form>
+
+</section>
+
+<aside>
+    <h4>Pro Tips</h4>
+    <ul>
+        <li>Save this page and use it offline.</li>
+        <li><a href="https://tools.heldenschmiede.ch">A list of tools</a></li>
+    </ul>
+</aside>
+
+<script>
+    var Calc = document.forms.calc;
+    var alphabet = new Map();
+    var alphabetReverse = new Map();
+    var numbers = [];
+
+    addListener(readAlphabet, [Calc.inputAlphabet, Calc.inputAlphabetStartValue, Calc.inputAlphabetGroupSeparator, Calc.inputAlphabetCharacterSeparator]);
+    readAlphabet();
+    addListener(readIoLetter, [Calc.ioLetter, Calc.ioValueSeparator]);
+    addListener(readIoValue, [Calc.ioValue]);
+
+    function addListener(action, elements)
+    {
+        elements.forEach(e => {
+            e.onkeyup = action;
+            e.onchange = action;
+        });
+    }
+
+    function readAlphabet()
+    {
+        var tAlphabet = new Map();
+        var tAlphabetReverse = new Map();
+        var value = parseInt(Calc.inputAlphabetStartValue.value);
+        var letters = Calc.inputAlphabet.value.split(
+            Calc.inputAlphabetGroupSeparator.value
+        );
+
+        letters.forEach(l => {
+            l.split(Calc.inputAlphabetCharacterSeparator.value).forEach(c => {
+                if (!tAlphabet.has(c)) {
+                    tAlphabet.set(c, value);
+                    if (!tAlphabetReverse.has(value)) {
+                        tAlphabetReverse.set(value, c);
+                    }
+                }
+            });
+            value++;
+        });
+
+        alphabet = tAlphabet;
+        alphabetReverse = tAlphabetReverse;
+        readIoLetter()
+        calculateIoValue();
+        calculateOutput();
+    }
+
+    function readIoLetter()
+    {
+        var tNumbers = [];
+        Calc.ioLetter.value.split('').forEach(l => {
+            if (alphabet.has(l)) {
+                tNumbers.push(alphabet.get(l));
+            }
+        });
+
+        numbers = tNumbers;
+        calculateIoValue();
+        calculateOutput();
+    }
+
+    function calculateIoValue()
+    {
+        tIoValue = '';
+        numbers.forEach(n => {
+            tIoValue += n.toString()+Calc.ioValueSeparator.value;
+        });
+        Calc.ioValue.value = tIoValue;
+    }
+
+    function readIoValue()
+    {
+        var tNumbers = [];
+        Calc.ioValue.value.split(Calc.ioValueSeparator.value).forEach(v => {
+            v = parseInt(v);
+            console.log(typeof v, v, alphabetReverse.has(v), alphabetReverse.get(v));
+            if (alphabetReverse.has(v)) {
+                tNumbers.push(v);
+            }
+        });
+
+        numbers = tNumbers;
+        calculateIoLetter();
+        calculateOutput();
+    }
+
+    function calculateIoLetter()
+    {
+        tIoLetter = '';
+        numbers.forEach(n => {
+            if (alphabetReverse.has(n)) {
+                tIoLetter += alphabetReverse.get(n).toString();
+            }
+        });
+        Calc.ioLetter.value = tIoLetter;
+    }
+
+    function calculateOutput()
+    {
+        calculateTotal();
+        calculateCrossTotal();
+        calculateDebugOutput();
+    }
+
+    function calculateTotal()
+    {
+        tTotal = 0;
+        numbers.forEach(n => {
+            tTotal += n;
+        });
+        Calc.outputTotal.value = tTotal;
+    }
+
+    function calculateCrossTotal()
+    {
+        tCrossTotal = 0;
+        Calc.outputTotal.value.split('').forEach(n => {
+            tCrossTotal += parseInt(n);
+        });
+        Calc.outputCrossTotal.value = tCrossTotal;
+    }
+
+    function calculateDebugOutput()
+    {
+        Calc.outputDebug.value = '';
+
+        Calc.outputDebug.value += 'Alphabet: ';
+        alphabet.forEach((v, k) => {
+            Calc.outputDebug.value += k+':'+v+', ';
+        });
+
+        Calc.outputDebug.value += "\nAlphabet Reverse: ";
+        alphabetReverse.forEach((v, k) => {
+            Calc.outputDebug.value += k+':'+v+', ';
+        });
+
+        Calc.outputDebug.value += "\nNumbers: ";
+        numbers.forEach(v => {
+            Calc.outputDebug.value += v+', ';
+        });
+    }
+</script>
+
+</body>
+</html>
