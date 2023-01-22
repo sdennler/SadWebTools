@@ -123,6 +123,17 @@ function hashes($input){
     return $out;
 }
 
+function json_string_decode($input){
+    $decoded = json_decode(utf8_encode($input));
+    if(!is_string($decoded)){
+        $decoded = var_export($decoded, true);
+    }
+    return addslashes($decoded);
+}
+
+function json_string_encode($input){
+    return addslashes(json_encode($input));
+}
 
 
 /**********************
@@ -157,6 +168,7 @@ class sadConv{
         'nl2br'            => array('New Line 2 <br />', 'nl2br', null),
         'htmlentities'     => array('HTML Entites', 'htmlEncode', 'html_entity_decode'),
         'strip_tags'       => array('Strip HTML Tags', false, 'strip_tags'),
+        'json_string'      => array('JSON String', 'json_string_encode', 'json_string_decode'),
         'tags2lower'       => array('Tags2lower', 'tags2lower', 'tags2upper'),
         'strtoupper'       => array('String to upper', 'strtoupper', 'strtolower'),
         'ucwords'          => array('First in word to upper', 'ucwords', null),
