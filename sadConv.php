@@ -84,13 +84,14 @@ function htmlEncode($string){
     return htmlentities(htmlentities($string)); // Double Encode decoded by the Browser
 }
 
-function scramble_word($word) {
+function scramble_word(array $matches) {
+    $word = $matches[1];
     if(strlen($word) <= 3) return $word;
     else {
         $new_word = $word;
         $count = 0;
         do {
-            $new_word = $word{0} . str_shuffle(substr($word, 1, -1)) . $word{strlen($word) - 1};
+            $new_word = $word[0] . str_shuffle(substr($word, 1, -1)) . $word[strlen($word) - 1];
             $count++;
         } while($new_word == $word && $count < 10);
         return $new_word;
@@ -98,7 +99,7 @@ function scramble_word($word) {
 }
 
 function scramble_words($input){
-    return preg_replace('/(\w+)/e', 'scramble_word("\1")', $input);
+    return preg_replace_callback('/(\w+)/', 'scramble_word', $input);
 }
 
 function tags2lower($input){
@@ -121,6 +122,7 @@ function hashes($input){
     }
     return $out;
 }
+
 
 
 /**********************
@@ -268,7 +270,7 @@ class sadConv{
 } // End class sadConv
 
 
-if($_POST['AsFile'] != 'yes'){
+if($_POST['AsFile'] ?? 'no' != 'yes'){
 ?><!DOCTYPE HTML><html>
 <head>
 <title>sadConv</title>
@@ -283,9 +285,9 @@ if($_POST['AsFile'] != 'yes'){
 <?php
 }
 
-$conv = new sadConv($_POST['InputString'], $_POST['Method'], $_POST['Way'], $timezone);
+$conv = new sadConv($_POST['InputString'] ?? '', $_POST['Method'] ?? '', $_POST['Way'] ?? '', $timezone);
 $conv->convert();
-if($_POST['AsFile'] != 'yes'){
+if($_POST['AsFile'] ?? 'no' != 'yes'){
  $conv->printOutput();
  $conv->printImputForm();
 }else{
@@ -293,7 +295,7 @@ if($_POST['AsFile'] != 'yes'){
 }
 //phpinfo();
 
-if($_POST['AsFile'] != 'yes'){
+if($_POST['AsFile'] ?? 'no' != 'yes'){
 ?>
 
 </body>
