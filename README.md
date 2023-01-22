@@ -1,3 +1,3 @@
 # SadWebTools
 
-Some old tools curently found at http://tools.heldenschmiede.ch
+Some old tools currently found at http://tools.heldenschmiede.ch
