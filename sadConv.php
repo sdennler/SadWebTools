@@ -180,7 +180,8 @@ class sadConv{
         'hourdec2hourmin'  => array('Hour decimal 2 Hour sexagesimal', 'hourDec2hurSex', 'hourSex2hourDec'),
         'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
         'tableCols'        => array('Table Col List', 'tableColEncode', null),
-        'countChar'        => array('Count characters', 'strlen', null),
+        'countBytes'       => array('Count Bytes', 'strlen', null),
+        'countChar'        => array('Count characters', 'mb_strlen', null),
         'quack'            => array('Quack', '(new Quack())->encode', '(new Quack())->decode'),
     );
 
@@ -202,7 +203,7 @@ class sadConv{
 
         $timeZones = $this->getOptionList(timezone_identifiers_list(), $this->timeZone, false);
 
-        $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self" accept-charset="ISO-8859-1">'."\n".
+        $form = '<form action="'.$_SERVER['PHP_SELF'].'" method="post" target="_self">'."\n".
                 '<textarea name="InputString" id="InputString" cols="120" rows="12">'.htmlspecialchars(stripslashes($this->originalString)).'</textarea> <label for="InputString" class="textarea">In</label><br />'."\n".
                 '<select name="Method" size="1">'."\n".$methodList.'</select>'."\n".
                 '<div class="options">&nbsp;<input type="Radio" name="Way" value="decode"'.($this->decode?' checked="checked"':'').' /><label for="Way">decode</label>&nbsp;<input type="Radio" name="Way" value="encode"'.(!$this->decode?' checked="checked"':'').' /><label for="Way">encode</label>'."\n".
@@ -294,7 +295,7 @@ if($_POST['AsFile'] ?? 'no' != 'yes'){
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
 
-<h1>sadConv 0.6</h1>
+<h1>sadConv 1.0</h1>
 
 <?php
 }
