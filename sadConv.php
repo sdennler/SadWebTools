@@ -1,6 +1,7 @@
 <?php
 require_once 'lib/sad.php';
 require_once 'lib/sadConv.lib.php';
+require_once 'lib/Quack.php';
 
 error_reporting(E_ALL ^ E_NOTICE);
 ini_set("display_errors", 1);
@@ -180,6 +181,7 @@ class sadConv{
         'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
         'tableCols'        => array('Table Col List', 'tableColEncode', null),
         'countChar'        => array('Count characters', 'strlen', null),
+        'quack'            => array('Quack', '(new Quack())->encode', '(new Quack())->decode'),
     );
 
     public function __construct($InputString, $Method, $Way, $TimeZone){
