@@ -1,0 +1,1 @@
+../vendor/schicksmail/schicksmail/example/schicksMail.js

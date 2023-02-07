@@ -1,2 +1,7 @@
 Redirect 301 /cipherCaesar.html /tools/cipherCaesar.html
 Redirect /tools/index.html /
+
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
