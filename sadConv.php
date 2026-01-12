@@ -42,18 +42,6 @@ function dateTime2Iso8601($timestr){
     return uStamp2Date(strtotime($timestr));
 }
 
-function schoepferExportTranslator($input){
-    #return ereg_replace('&quot;&quot;20&quot;&quot;', "\n", $input);
-    $input = substr($input, strpos($input, "\n")+1);
-    $input = str_replace("\n", ' ', $input);
-    $input = str_replace("\r", '', $input);
-    $input = str_replace("&quot;", "#", $input);
-    $input = preg_replace("/##([0-9]{5,9})##/","\n$1##", $input);
-    $input = str_replace("##", "\t", $input);
-    $input = str_replace("#", '', $input);
-    return $input;
-}
-
 function toIdList($input){
     $input = preg_replace('/[^\d]+/', ',', trim($input));
     $input = trim($input, ',');
@@ -178,7 +166,6 @@ class sadConv{
         'ustampmillis'     => array('Unix time stamp (milliseconds)', null, 'uStampMillis2Date'),
         'dateTime2Iso8601' => array('DateTime/zone to ISO 8601', 'dateTime2Iso8601', null),
         'hourdec2hourmin'  => array('Hour decimal 2 Hour sexagesimal', 'hourDec2hurSex', 'hourSex2hourDec'),
-        'schopferTrans'    => array('Sch&ouml;pferTrans', false, 'schoepferExportTranslator'),
         'tableCols'        => array('Table Col List', 'tableColEncode', null),
         'countBytes'       => array('Count Bytes', 'strlen', null),
         'countChar'        => array('Count characters', 'mb_strlen', null),
