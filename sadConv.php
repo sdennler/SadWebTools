@@ -53,6 +53,25 @@ function toIdListUnique($input){
     return $input;
 }
 
+function toUuidList($input, $uniq=false){
+    $output = $stats = '';
+    preg_match_all('/[\w]{8}-[\w]{4}-[\w]{4}-[\w]{4}-[\w]{12}/', $input, $matches);
+    if(0 < count($matches[0])){
+        $stats .= 'Total: '. count($matches[0]);
+        $matches[0] = array_map('strtolower', $matches[0]);
+        if($uniq){
+            $matches[0] = array_unique($matches[0]);
+            $stats .= '; Uniq: '. count($matches[0]);
+        }
+        $output = '"'.implode('","', $matches[0]).'"';
+    }
+    return ['converted' => $output, 'stats' => $stats];
+}
+
+function toUuidListUnique($input){
+    return toUuidList($input, true);
+}
+
 function tableColEncode($input){
     $cols = array();
     $match = array();
@@ -124,6 +143,25 @@ function json_string_encode($input){
     return addslashes(json_encode($input));
 }
 
+function htmlAwareNl2Br($input)
+{
+    $input = trim($input);
+    $input = str_replace(array("\r\n", "\r"), "\n", $input); // normalize endings
+    return preg_replace(
+        array(
+            '#^\s*$#m', // empty lines
+            '#([^> \t])([ \t])*\n#i', // lines not ending in >
+            "#[\n\r]#", // cleanup all
+        ),
+        array(
+            '<br>',
+            '\1<br>',
+            '\1',
+        ),
+        $input
+    );
+}
+
 
 /**********************
  * Do the conversions *
@@ -133,6 +171,7 @@ class sadConv{
 
     protected $originalString;
     protected $convertetString = false;
+    protected $converterStats = '';
     protected $method;
     protected $decode;
     protected $timeZone;
@@ -142,6 +181,8 @@ class sadConv{
         // Internal Name => Name, encode function, decode function
         'toIdList'         => array('To ID list', 'toIdList', false),
         'toIdListUnique'   => array('To ID list (Unique)', 'toIdListUnique', false),
+        'toUUIDList'       => array('To UUID list', 'toUuidList', false),
+        'toUUIDListUnique' => array('To UUID list (Unique)', 'toUuidListUnique', false),
         'quoted-printable' => array('Quoted-Printable', null, 'quoted_printable_decode'),
         'base64'           => array('MIME base64', 'base64_encode', 'base64_decode'),
         'rawurl'           => array('Raw URL (RFC 1738)', 'rawurlencode', 'rawurldecode'),
@@ -155,6 +196,7 @@ class sadConv{
         'serialize'        => array('Serialize', 'serialize', 'getReadableSerializedString'),
         'slashes'          => array('Slashes', 'addslashes', 'stripslashes'),
         'nl2br'            => array('New Line 2 <br />', 'nl2br', null),
+        'nl2brHtml'        => array('New Line 2 <br /> HTML aware', 'htmlAwareNl2Br', null),
         'htmlentities'     => array('HTML Entites', 'htmlEncode', 'html_entity_decode'),
         'strip_tags'       => array('Strip HTML Tags', false, 'strip_tags'),
         'json_string'      => array('JSON String', 'json_string_encode', 'json_string_decode'),
@@ -197,7 +239,9 @@ class sadConv{
                 '&nbsp;<input type="Checkbox" name="AsFile" value="yes" /><label for="AsFile">Download&nbsp;result</label></div>'."\n".
                 '&nbsp;<input type="Submit" name="convert" value="Convert">'."\n".
                 '&nbsp;&nbsp;&nbsp;<input type="Button" name="clear" value="Clear" onclick="javascript:document.getElementById(\'InputString\').value=\'\';">'."\n".
+                '&nbsp;&nbsp;&nbsp;<input type="Button" name="copy" value="Out -> In" onclick="javascript:document.getElementById(\'InputString\').value=document.getElementById(\'OutputString\').value;">'."\n".
                 '<br/><br/><select name="Timezone" size="1">'."\n".$timeZones.'</select>'."\n".
+                '&nbsp;&nbsp;&nbsp;'.$this->converterStats."\n".
                 "</form>\n";
 
         echo $form;
@@ -234,15 +278,25 @@ class sadConv{
         }
 
         if(is_string($methodFunction)){
-            $this->convertetString = eval("return $methodFunction(\$this->originalString);");
-            if($this->convertetString === null) sad('false!');
+            $out = eval("return $methodFunction(\$this->originalString);");
+            if(is_array($out)){
+                if(!isset($out['converted'])){
+                    $this->errorMSG = 'Error';
+                    return false;
+                }
+                $this->convertetString = $out['converted'];
+                $this->converterStats = $out['stats'] ?? '';
+            } else {
+                $this->convertetString = $out;
+            }
+
             return true;
         }
     } // End function convert
 
     public function printOutput(){
         if(!$this->errorMSG && !($this->convertetString === false)){
-            $form = '<textarea name="OutputString" cols="120" rows="24">'.stripslashes($this->convertetString).'</textarea> <label for="OutputString" class="textarea">Out</label>'."\n";
+            $form = '<textarea name="OutputString" id="OutputString" cols="120" rows="24">'.stripslashes($this->convertetString).'</textarea> <label for="OutputString" class="textarea">Out</label>'."\n";
             echo $form;
         }
         if($this->errorMSG) echo '<b>Error: '.$this->errorMSG.'</b>';
@@ -282,7 +336,7 @@ if($_POST['AsFile'] ?? 'no' != 'yes'){
 </head>
 <body text="#000000" bgcolor="#FFFFFF" link="#FF0000" alink="#FF0000" vlink="#FF0000">
 
-<h1>sadConv 1.0</h1>
+<h1>sadConv 1.1</h1>
 
 <?php
 }
